@@ -11,6 +11,7 @@ const (
 	ESC_oct = '\033'
 	ESC_hex = '\x1b'
 	ESC_utf = '\u001b'
+	CSI     = '['
 )
 
 /*** color/graphics mode ***/
@@ -68,7 +69,7 @@ const (
 )
 
 func Aprint(style *Style, msg string) {
-	fmt.Print(style.StyleCode())
+	fmt.Print(style.Code())
 	fmt.Print(msg)
 
 	// reset styles
@@ -76,7 +77,7 @@ func Aprint(style *Style, msg string) {
 }
 
 func Aprintf(style *Style, msg string, args ...any) {
-	fmt.Print(style.StyleCode())
+	fmt.Print(style.Code())
 
 	// ensures formatting doesn't spill into new line
 	if lastChar(msg) == '\n' {
@@ -90,7 +91,7 @@ func Aprintf(style *Style, msg string, args ...any) {
 }
 
 func Aprintln(style *Style, msg string) {
-	fmt.Print(style.StyleCode())
+	fmt.Print(style.Code())
 	fmt.Print(msg)
 
 	ResetStyles()
@@ -105,8 +106,8 @@ func ResetStyles() {
 /*** Style Sequences ***/
 
 type Style struct {
-	codes []string
-	args  string
+	codes []string // a list of the commands
+	args  string   // ';' delimited string of commands
 }
 
 func NewStyle(args ...string) *Style {
@@ -146,8 +147,8 @@ func (s *Style) Args() string {
 	return s.args
 }
 
-func (s *Style) StyleCode() string {
-	return fmt.Sprintf("%c[%sm", ESC_hex, s.Args())
+func (s *Style) Code() string {
+	return fmt.Sprintf("%c%c%sm", ESC_hex, CSI, s.Args())
 }
 
 /*** helpers ***/
