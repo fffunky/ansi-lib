@@ -68,6 +68,8 @@ const (
 	BG_WHITE   = "47"
 )
 
+// Aprint is an analog for fmt.Print. The passed *Style object
+// defines how the code should format msg when printed.
 func Aprint(style *Style, msg string) {
 	fmt.Print(style.Code())
 	fmt.Print(msg)
@@ -76,6 +78,9 @@ func Aprint(style *Style, msg string) {
 	ResetStyles()
 }
 
+// Aprintf is an analog for fmt.Printf. The passed *Style object
+// defines how the code should format msg when printed. Any additional
+// args will be used to fill format specifiers in msg.
 func Aprintf(style *Style, msg string, args ...any) {
 	fmt.Print(style.Code())
 
@@ -90,17 +95,59 @@ func Aprintf(style *Style, msg string, args ...any) {
 	}
 }
 
+// Aprintf is an analog for fmt.Println. The passed *Style object
+// defines how the code should format msg whne printed. Prints an
+// addition newline after msg
 func Aprintln(style *Style, msg string) {
 	fmt.Print(style.Code())
 	fmt.Print(msg)
 
 	ResetStyles()
-	fmt.Print("\x1b[0J") // erase from cursor to end of screen
+	fmt.Print("\x1b[0J") // erase from cursor to end of screen so highlighting stops after text ends
 	fmt.Print("\n")
+}
+
+// Asprint is an analog for fmt.Sprint. The passed *Style object
+// defines how msg should be formatted when printed. returns printable
+// value as a string.
+func Asprint(style *Style, msg string) string {
+	var out bytes.Buffer
+
+	out.WriteString(style.Code())
+	out.WriteString(msg)
+	out.WriteString(ResetStyleString())
+
+	return out.String()
+}
+
+// Asprintf is an analog for fmt.Sprintf. The passed *Style object
+// defines how msg should be formatted when printed. Any additional
+// args will be used to fill format specifiers in msg. returns printable
+// value as a string.
+func Asprintf(style *Style, msg string, args ...any) string {
+	var out bytes.Buffer
+
+	out.WriteString(style.Code())
+
+	// ensure formatting doesn't spill into new line
+	if lastChar(msg) == '\n' {
+		out.WriteString(fmt.Sprintf(msg[:len(msg)-1], args...))
+		out.WriteString(ResetStyleString())
+		out.WriteByte('\n')
+	} else {
+		out.WriteString(fmt.Sprintf(msg, args...))
+		out.WriteString(ResetStyleString())
+	}
+
+	return out.String()
 }
 
 func ResetStyles() {
 	fmt.Print("\x1b[22;23;24;25;26;28;29;0m")
+}
+
+func ResetStyleString() string {
+	return fmt.Sprintf("\x1b[22;23;24;25;26;28;29;0m")
 }
 
 /*** Style Sequences ***/
