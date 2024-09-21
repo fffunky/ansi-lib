@@ -14,6 +14,41 @@ const (
 	CSI     = '['
 )
 
+/*** SCREEN FUNCTIONS ***/
+
+const CLEAR_SCREEN = "2J"
+
+/*** cursor functions ***/
+
+const (
+	HIDE_CURSOR = "?25l"
+	SHOW_CURSOR = "?25h"
+)
+
+func CursorHome() {
+	fmt.Printf("\x1b[H")
+}
+
+func CursorGoto(y, x int) {
+	fmt.Printf("\x1b[%d;%dH", y, x)
+}
+
+func MoveCursorUp(lines int) {
+	fmt.Printf("\x1b[%dA", lines)
+}
+
+func MoveCursorDown(lines int) {
+	fmt.Printf("\x1b[%dB", lines)
+}
+
+func MoveCursorRight(cols int) {
+	fmt.Printf("\x1b[%dC", cols)
+}
+
+func MoveCursorLeft(cols int) {
+	fmt.Printf("\x1b[%dD", cols)
+}
+
 /*** color/graphics mode ***/
 
 const (
