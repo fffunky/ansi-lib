@@ -103,6 +103,11 @@ const (
 	BG_WHITE   = "47"
 )
 
+// ClearScreen Clears all printed text from the screen.
+func ClearScreen() {
+	fmt.Printf("\x1b[%s", CLEAR_SCREEN)
+}
+
 // Aprint is an analog for fmt.Print. The passed *Style object
 // defines how the code should format msg when printed.
 func Aprint(style *Style, msg string) {
