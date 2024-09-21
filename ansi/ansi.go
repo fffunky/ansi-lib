@@ -16,7 +16,28 @@ const (
 
 /*** SCREEN FUNCTIONS ***/
 
-const CLEAR_SCREEN = "2J"
+const (
+	CLEAR_SCREEN   = "2J"
+	SAVE_SCREEN    = "?47l"
+	RESTORE_SCREEN = "?47h"
+)
+
+// SaveScreen saves the current state of the screen to be restored
+// later with RestoreScreen().
+func SaveScreen() {
+	fmt.Printf("\x1b[%s", SAVE_SCREEN)
+}
+
+// ClearScreen Clears all printed text from the screen.
+func ClearScreen() {
+	fmt.Printf("\x1b[%s", CLEAR_SCREEN)
+}
+
+// RestoreScreen returns the screen to the state it was in when SaveScreen()
+// was called.
+func RestoreScreen() {
+	fmt.Printf("\x1b[%s", RESTORE_SCREEN)
+}
 
 /*** cursor functions ***/
 
@@ -102,11 +123,6 @@ const (
 	BG_CYAN    = "46"
 	BG_WHITE   = "47"
 )
-
-// ClearScreen Clears all printed text from the screen.
-func ClearScreen() {
-	fmt.Printf("\x1b[%s", CLEAR_SCREEN)
-}
 
 // Aprint is an analog for fmt.Print. The passed *Style object
 // defines how the code should format msg when printed.
